@@ -39,6 +39,9 @@ for page in pages:
                 link = (link_to_parse['href']) if link_to_parse else None
                 unique_nr = unique_nr_extract(link) if link else None
 
+                link_aditional_info = cells[4].find("a")
+
+
                 decision = {
                     "Senat": cells[0].text.strip(),
                     "Entscheidungsdatum": cells[1].text.strip(),
@@ -46,7 +49,9 @@ for page in pages:
                     "Aktenzeichen": cells[3].text.strip(),
                     "Link_Aktenzeichen": f"{url_base}{link}",
                     "Zusatzinformationen": cells[4].text.strip(),
-                    "Unique_nr": unique_nr
+                    "Unique_nr": unique_nr,
+                    "Link_aditional_info": f"{url_base}{link_aditional_info['href']}" if link_aditional_info else None,
+                    #"Link_to_pdf": f"{url_base}/cgi-bin/rechtsprechung/document.py?Gericht=bgh&Art=en&nr={unique_nr}&pos=0&anz=1&Blank=1&file=dokument.pdf
                    
                 }
 
@@ -65,3 +70,4 @@ df.to_csv(local_path, index=False, encoding='utf-8', sep=';')  # Save without in
 df.to_csv(working_path, index=False, encoding='utf-8', sep=';')  # Save without index and with utf-8 encoding using semicolon (;) as separator
 
 print(f"File saved to {local_path}")
+print(f"File saved to {working_path}")
