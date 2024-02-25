@@ -4,7 +4,9 @@
 
 This Python script for `bundesgerichtshof_table_scrapper.py`is designed to collect judicial decisions table from from the Bundesgerichtshof (Federal Court of Justice of Germany) website avialable in `https://juris.bundesgerichtshof.de/cgi-bin/rechtsprechung/list.py?Gericht=bgh&Art=en`. It gathers basic information on judicial decisions, including the senate, decision date, filing date, case number, and additional information, and saves it to a CSV file.
 
-![alt text](image.png)
+![image](bundesgerichtshof_local/images/image.png)
+
+
 
 ## 🚀 Features:
 - Searches data from multiple pages of Bundesgerichtshof decisions.
