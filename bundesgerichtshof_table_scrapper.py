@@ -6,8 +6,9 @@ from urllib.parse import urlparse, parse_qs
 #/html/body/table[2]/tbody/tr[1]/td[4]/table/tbody/tr[2]/td/form/table/thead
 
 # webpage_url da página
-url_base = "https://juris.bundesgerichtshof.de/"
-document_path = "cgi-bin/rechtsprechung/list.py?Gericht=bgh&Art=en&Datum=Aktuell&Seite="
+url_base = "https://juris.bundesgerichtshof.de"
+comum_path = "/cgi-bin/rechtsprechung/"
+aktenzeichen_path = "list.py?Gericht=bgh&Art=en&Datum=Aktuell&Seite="
 pages = range(0,43) # 
 
 
@@ -20,7 +21,7 @@ def unique_nr_extract(href):
 decisions = []
 
 for page in pages:
-    webpage_url = f"{url_base}{document_path}{page}"
+    webpage_url = f"{url_base}{comum_path}{aktenzeichen_path}{page}"
     response = requests.get(webpage_url)
     
     if response.status_code == 200:
@@ -33,14 +34,16 @@ for page in pages:
             cells = columm.find_all("td")
             if len(cells) == 5:
                 
-                all_links_aktenzeichen = cells[3].find_all("a")
-                print(len(all_links_aktenzeichen))
-                link_to_parse = all_links_aktenzeichen[1] if all_links_aktenzeichen else None
-                link = (link_to_parse['href']) if link_to_parse else None
+                aktenzeichen_all_links = cells[3].find_all("a")
+                aktenzeichen_link_to_parse = aktenzeichen_all_links[1] if aktenzeichen_all_links else None
+                link = (aktenzeichen_link_to_parse['href']) if aktenzeichen_link_to_parse else None
                 unique_nr = unique_nr_extract(link) if link else None
+                print(unique_nr)
 
-                link_aditional_info = cells[4].find("a")
-
+                aditional_info_all_links = cells[4].find_all("a") # Retorna uma lista com todos os links
+                aditional_info_links = []
+                for aditional_info_link in aditional_info_all_links:
+                    aditional_info_links.append(f"{url_base}{comum_path}{aditional_info_link['href']}")
 
                 decision = {
                     "Senat": cells[0].text.strip(),
@@ -50,13 +53,12 @@ for page in pages:
                     "Link_Aktenzeichen": f"{url_base}{link}",
                     "Zusatzinformationen": cells[4].text.strip(),
                     "Unique_nr": unique_nr,
-                    "Link_aditional_info": f"{url_base}{link_aditional_info['href']}" if link_aditional_info else None,
-                    #"Link_to_pdf": f"{url_base}/cgi-bin/rechtsprechung/document.py?Gericht=bgh&Art=en&nr={unique_nr}&pos=0&anz=1&Blank=1&file=dokument.pdf
-                   
+                    "Link_Zusatzinformationen": aditional_info_links
+                    
                 }
 
                 decisions.append(decision)
-                print(unique_nr)
+               
 
 df = pd.DataFrame(decisions)
 
@@ -65,9 +67,11 @@ df = pd.DataFrame(decisions)
 
 # Save the dataframe to a csv file
 local_path= "bundesgerichtshof_local/data/decisions_table.csv"
-working_path = "//mnt/c/Users/daniz/OneDrive/Documentos/iur.crowd/decisions_table.csv"
-df.to_csv(local_path, index=False, encoding='utf-8', sep=';')  # Save without index and with utf-8 encoding using semicolon (;) as separator
-df.to_csv(working_path, index=False, encoding='utf-8', sep=';')  # Save without index and with utf-8 encoding using semicolon (;) as separator
-
+df.to_csv(local_path, index=False, encoding='utf-8', sep=';')  
 print(f"File saved to {local_path}")
+
+'''
+working_path = "//mnt/c/Users/daniz/OneDrive/Documentos/iur.crowd/decisions_table.csv"
+df.to_csv(working_path, index=False, encoding='utf-8', sep=';')  
 print(f"File saved to {working_path}")
+'''
