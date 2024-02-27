@@ -6,8 +6,8 @@ from urllib.parse import urlparse, parse_qs
 #/html/body/table[2]/tbody/tr[1]/td[4]/table/tbody/tr[2]/td/form/table/thead
 
 # webpage_url da página
-url_base = "https://juris.bundesgerichtshof.de"
-comum_path = "/cgi-bin/rechtsprechung/"
+url_base = "https://juris.bundesgerichtshof.de/"
+comum_path = "cgi-bin/rechtsprechung/"
 aktenzeichen_path = "list.py?Gericht=bgh&Art=en&Datum=Aktuell&Seite="
 pages = range(0,43) # 
 
@@ -38,7 +38,7 @@ for page in pages:
                 aktenzeichen_link_to_parse = aktenzeichen_all_links[1] if aktenzeichen_all_links else None
                 link = (aktenzeichen_link_to_parse['href']) if aktenzeichen_link_to_parse else None
                 unique_nr = unique_nr_extract(link) if link else None
-                print(unique_nr)
+                #print(unique_nr)
 
                 aditional_info_all_links = cells[4].find_all("a") # Retorna uma lista com todos os links
                 aditional_info_links = []
@@ -50,7 +50,7 @@ for page in pages:
                     "Entscheidungsdatum": cells[1].text.strip(),
                     "Einspieldatum": cells[2].text.strip(),
                     "Aktenzeichen": cells[3].text.strip(),
-                    "Link_Aktenzeichen": f"{url_base}{link}",
+                    "Link_Aktenzeichen": f"{url_base}{comum_path}{link}",
                     "Zusatzinformationen": cells[4].text.strip(),
                     "Unique_nr": unique_nr,
                     "Link_Zusatzinformationen": aditional_info_links
@@ -59,7 +59,8 @@ for page in pages:
 
                 decisions.append(decision)
                
-
+print(decisions[0])
+'''
 df = pd.DataFrame(decisions)
 
 # print(df)
@@ -69,6 +70,7 @@ df = pd.DataFrame(decisions)
 local_path= "bundesgerichtshof_local/data/decisions_table.csv"
 df.to_csv(local_path, index=False, encoding='utf-8', sep=';')  
 print(f"File saved to {local_path}")
+'''
 
 '''
 working_path = "//mnt/c/Users/daniz/OneDrive/Documentos/iur.crowd/decisions_table.csv"
